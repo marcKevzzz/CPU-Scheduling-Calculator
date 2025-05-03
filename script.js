@@ -9,14 +9,14 @@ import {
   deleteRow,
   clearTable,
   addRowP,
-} from "../../render/render.js";
+} from "render/render.js";
 
-import { calculateFCFS } from "../../algorithm/fcfs.js";
-import { calculateSJF } from "../../algorithm/sjf.js";
-import { calculateNPP } from "../../algorithm/npp.js";
-import { calculateRR } from "../../algorithm/rr.js";
-import { calculateSRTF } from "../../algorithm/srtf.js";
-import { calculatePP } from "../../algorithm/pp.js";
+import { calculateFCFS } from "algorithm/fcfs.js";
+import { calculateSJF } from "algorithm/sjf.js";
+import { calculateNPP } from "algorithm/npp.js";
+import { calculateRR } from "algorithm/rr.js";
+import { calculateSRTF } from "algorithm/srtf.js";
+import { calculatePP } from "algorithm/pp.js";
 function scheduleAndRender(algorithm, options = {}, mode) {
   resetUI();
   const { processes, timeQuantum } = getProcessData("#processTable", mode);
