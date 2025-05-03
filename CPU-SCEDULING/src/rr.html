@@ -108,12 +108,12 @@
                   aria-labelledby="navbarDropdown"
                 >
                   <li>
-                    <a class="dropdown-item py-2" href="../src/fcfs.html"
+                    <a class="dropdown-item py-2 active" href="../src/fcfs.html"
                       >First Come First Serve</a
                     >
                   </li>
                   <li>
-                    <a class="dropdown-item py-2 active" href="#"
+                    <a class="dropdown-item py-2" href="../src/sjf.html"
                       >Shortest Job Next</a
                     >
                   </li>
@@ -187,7 +187,7 @@
             style="position: sticky; top: 85px; width: fit-content"
             id="header1"
           >
-            Shortest Job First (SJF)
+            First Come First Serve (FCFS)
           </h1>
           <div
             class="rounded d-flex pane flex-column align-items-center"
@@ -211,11 +211,14 @@
                       <th scope="col" class="bg-primary text-light border-end">
                         Arrival Time
                       </th>
+                      <th scope="col " class="bg-primary text-light r">
+                        Burst Time
+                      </th>
                       <th
                         scope="col "
                         class="bg-primary text-light rounded-end"
                       >
-                        Burst Time
+                        Time Quantum
                       </th>
                     </tr>
                   </thead>
@@ -235,6 +238,15 @@
                           type="number"
                           min="0"
                           placeholder="Enter value"
+                          class="form-control shadow-none border-0 px-0"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="Enter value"
+                          id="timeQuantum"
                           class="form-control shadow-none border-0 px-0"
                         />
                       </td>
@@ -293,13 +305,13 @@
               <div class="table-edit-btn d-flex gap-2">
                 <button
                   class="btn btn-primary shadow-sm border-0 py-2"
-                  id="calculateSJF"
+                  id="calculateRR"
                 >
                   Calculate
                 </button>
                 <button
                   class="btn btn-outline-danger shadow-sm py-2"
-                  id="clearTable"
+                  id="clear"
                 >
                   Clear
                 </button>
@@ -373,20 +385,6 @@
     <!--  -->
     <script src="../script.js" type="module"></script>
     <script>
-      const themeToggle = document.getElementById("themeToggle");
-      const themeIcon = document.getElementById("themeIcon");
-      themeToggle.addEventListener("click", () => {
-        document.body.classList.toggle("bg-dark");
-        document.body.classList.toggle("text-light");
-        if (document.body.classList.contains("bg-dark")) {
-          themeIcon.classList.remove("bi-sun");
-          themeIcon.classList.add("bi-moon");
-        } else {
-          themeIcon.classList.remove("bi-moon");
-          themeIcon.classList.add("bi-sun");
-        }
-      });
-
       window.addEventListener("scroll", function () {
         const header = document.getElementById("header1");
 

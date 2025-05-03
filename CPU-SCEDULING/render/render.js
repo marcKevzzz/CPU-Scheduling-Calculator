@@ -4,14 +4,14 @@ export const fcfs = (arrivalTime, burstTime) => {
   const processes = arrivalTime.map((at, i) => ({
     process: (i + 10).toString(36).toUpperCase(),
     arrival: at,
-    burst: burstTime[i]
+    burst: burstTime[i],
   }));
 
   processes.sort((a, b) => a.arrival - b.arrival);
 
   let currentTime = 0;
 
-  processes.forEach(p => {
+  processes.forEach((p) => {
     p.start = Math.max(currentTime, p.arrival);
     p.end = p.start + p.burst;
     currentTime = p.end;
@@ -19,30 +19,44 @@ export const fcfs = (arrivalTime, burstTime) => {
 
   return processes;
 };
-
-
 export const sjf = (arrivalTime, burstTime) => {
   const processes = arrivalTime.map((at, i) => ({
-    process: (i + 10).toString(36).toUpperCase(),
+    process: `P${i + 1}`,
     arrival: at,
     burst: burstTime[i],
-    completed: false
+    completed: false,
   }));
 
-  const result = [];
+  const ganttChart = [];
   let currentTime = 0;
   let completedCount = 0;
   const n = processes.length;
 
   while (completedCount < n) {
-    // Get all processes that have arrived and are not completed
+    // Get all arrived and uncompleted processes
     const readyQueue = processes
-      .filter(p => p.arrival <= currentTime && !p.completed)
+      .filter((p) => p.arrival <= currentTime && !p.completed)
       .sort((a, b) => a.burst - b.burst || a.arrival - b.arrival);
 
+    // Prepare the ready queue for display (based on arrival order only)
+    const readySnapshot = processes
+      .filter((p) => p.arrival <= currentTime && !p.completed)
+      .sort((a, b) => a.arrival - b.arrival)
+      .map((p) => p.process);
+
     if (readyQueue.length === 0) {
-      // If no process is ready, advance the current time to the next process arrival
-      currentTime = Math.min(...processes.filter(p => !p.completed).map(p => p.arrival));
+      const nextArrival = Math.min(
+        ...processes.filter((p) => !p.completed).map((p) => p.arrival)
+      );
+      if (nextArrival > currentTime) {
+        ganttChart.push({
+          label: "Idle",
+          start: currentTime,
+          end: nextArrival,
+          queue: [],
+        });
+        currentTime = nextArrival;
+      }
       continue;
     }
 
@@ -50,15 +64,21 @@ export const sjf = (arrivalTime, burstTime) => {
     currentProcess.start = currentTime;
     currentProcess.end = currentTime + currentProcess.burst;
     currentProcess.completed = true;
-    result.push(currentProcess);
+
+    ganttChart.push({
+      label: currentProcess.process,
+      start: currentTime,
+      end: currentProcess.end,
+      queue: readySnapshot.filter((p) => p !== currentProcess.process),
+    });
+
     currentTime = currentProcess.end;
     completedCount++;
   }
 
-  return result;
+  return ganttChart;
 };
-
-export function renderGanttChart(result, options = {}) {
+export function renderGanttChart(result, options = {}, ganttChart) {
   const {
     showQueue = true,
     algorithm = "FCFS",
@@ -70,6 +90,7 @@ export function renderGanttChart(result, options = {}) {
     },
   } = options;
 
+  console.table(ganttChart.rbt);
   const h = document.getElementById(containerIds.head);
   const b = document.getElementById(containerIds.body);
   const t = document.getElementById(containerIds.tail);
@@ -82,104 +103,228 @@ export function renderGanttChart(result, options = {}) {
 
   const timeline = [];
   const timelineProcess = [];
-  let prevEnd = 0;
+  const burstDurations = [];
+  const timeMarkers = [];
 
-  console.table(result.map(p => ({
-    process: p.process, 
-    arrival: p.arrival,
-    burst: p.burst,
-    start: p.start,
-    end: p.end
-  })));
-  
-  result.forEach(p => {
-    // Only calculate idle time if there is a gap between processes
-    const idleTime = Math.max(0, p.start - prevEnd); // Avoid negative idle time
-    if (idleTime > 0) {
-      for (let i = 0; i < idleTime; i++) {
-        timeline.push(1);  // Idle unit
-        timelineProcess.push("i");  // Idle process
-      }
-    }
+  renderQueueTimeline(ganttChart, q);
 
-    // Process time duration
-    const duration = p.end - p.start;
-    timeline.push(duration);
-    timelineProcess.push(p.process);
-    prevEnd = p.end;
+  ganttChart.forEach((entry) => {
+    timeline.push(entry.start);
+    timelineProcess.push(entry.label);
+    burstDurations.push(entry.end - entry.start);
+    timeMarkers.push(entry.start);
   });
 
+  if (ganttChart.length > 0) {
+    timeMarkers.push(ganttChart[ganttChart.length - 1].end);
+  }
+
   // Tail (Time scale)
-  let time = 0;
-  timeline.forEach((duration) => {
+  const allTimePoints = ganttChart.map((e) => e.start);
+  allTimePoints.push(ganttChart[ganttChart.length - 1].end);
+  allTimePoints.forEach((time, i) => {
     const timeDiv = document.createElement("div");
     timeDiv.classList.add("text-start");
     timeDiv.style.width = "40px";
     timeDiv.innerHTML = `${time}`;
+    if (i === allTimePoints.length - 1) {
+      timeDiv.classList.add("bg-primary", "rounded", "px-2");
+      timeDiv.style.height = "fit-content";
+      timeDiv.style.width = "fit-content";
+    }
     t.appendChild(timeDiv);
-    time += duration;
   });
 
-  const lastTime = document.createElement("div");
-  lastTime.classList.add("text-start", "bg-primary", "px-2", "rounded");
-  lastTime.style.width = "fit-content";
-  lastTime.style.color = "white";
-  lastTime.innerHTML = `${time}`;
-  t.appendChild(lastTime);
-
-  // Body (Processes)
-  timelineProcess.forEach(p => {
+  // Body (Gantt process blocks)
+  timelineProcess.forEach((label) => {
     const box = document.createElement("div");
     box.classList.add("border", "p-2", "text-center");
     box.style.width = "40px";
-    box.innerHTML = `<strong>${p}</strong>`;
+    box.innerHTML = `<strong>${label}</strong>`;
     b.appendChild(box);
   });
 
-  // Head (Burst times)
-  const burstTime = document.createElement("div");
-  burstTime.classList.add("text-end");
-  burstTime.style.width = "40px";
-  burstTime.innerHTML = `Bt`;
-  h.appendChild(burstTime);
+  if (algorithm === "RR") {
+    const headPanel = document.createElement("div");
+    headPanel.classList.add("d-flex", "flex-column");
 
-  timeline.forEach(p => {
-    const btDiv = document.createElement("div");
-    btDiv.classList.add("text-end");
-    btDiv.style.width = "40px";
-    btDiv.innerHTML = `${p}`;
-    h.appendChild(btDiv);
-  });
+    // Headers
+    const rbtHeader = document.createElement("div");
+    rbtHeader.classList.add("d-flex", "flex-row");
+    const btHeader = document.createElement("div");
+    btHeader.classList.add("d-flex", "flex-row");
 
-  // Queue visualization (optional)
-  if (showQueue && q) {
-    const started = new Set();
-    let currentTime = 0;
+    // Header Labels
+    const rbtLbl = document.createElement("div");
+    rbtLbl.style.width = "40px";
+    rbtLbl.innerHTML = "<strong>RBt</strong>";
+    rbtHeader.appendChild(rbtLbl);
 
-    timelineProcess.forEach((proc, i) => {
-      const queueDiv = document.createElement("div");
-      queueDiv.classList.add("text-center");
-      queueDiv.style.width = "40px";
-      queueDiv.style.fontSize = "14px";
+    const btLbl = document.createElement("div");
+    btLbl.style.width = "40px";
+    btLbl.innerHTML = "<strong>Bt</strong>";
+    btHeader.appendChild(btLbl);
 
-      const readyQueue = result
-        .filter(p =>
-          p.arrival <= currentTime && !started.has(p.process)
-        )
-        .sort((a, b) => {
-          if (algorithm === "SJF") return a.burst - b.burst;
-          return a.arrival - b.arrival;
-        })
-        .map(p => p.process);
+    // Build burst map for each process
+    const burstDurationsMap = {};
+    ganttChart.forEach((entry) => {
+      if (entry.label !== "i") {
+        burstDurationsMap[entry.label] ??= 0;
+        burstDurationsMap[entry.label] += entry.end - entry.start;
+      }
+    });
 
-      queueDiv.innerHTML = readyQueue.join("<br />");
-      q.appendChild(queueDiv);
+    // Add RBt and Bt per Gantt chart entry
+    ganttChart.forEach((entry) => {
+      const rbtDiv = document.createElement("div");
+      rbtDiv.style.width = "40px";
 
-      started.add(proc);
-      currentTime += timeline[i];
+      const btDiv = document.createElement("div");
+      btDiv.style.width = "40px";
+
+      if (entry.label === "i") {
+        rbtDiv.textContent = "";
+        btDiv.textContent = "1";
+      } else {
+        rbtDiv.textContent = entry.rbt === 0 ? "" : entry.rbt ?? "";
+        btDiv.textContent = burstDurationsMap[entry.label] ?? "";
+      }
+
+      rbtHeader.appendChild(rbtDiv);
+      btHeader.appendChild(btDiv);
+    });
+
+    headPanel.appendChild(rbtHeader);
+    headPanel.appendChild(btHeader);
+    h.appendChild(headPanel);
+  } else {
+    // Head (Burst Times)
+    const burstLabel = document.createElement("div");
+    burstLabel.style.width = "40px";
+    burstLabel.innerHTML = "Bt";
+    h.appendChild(burstLabel);
+
+    burstDurations.forEach((dur) => {
+      const btDiv = document.createElement("div");
+      btDiv.style.width = "40px";
+      btDiv.innerHTML = `${dur}`;
+      h.appendChild(btDiv);
     });
   }
 }
+function renderQueueTimeline(ganttChart, q) {
+  if (!q) return;
+  console.table(ganttChart.rbt);
+
+  // Clear the container to reset when clicked again
+  q.innerHTML = "";
+
+  const remainingLabels = []; // Use array to track the labels that will appear
+
+  // Prepopulate the remainingLabels array with all process labels
+  ganttChart.forEach((entry) => {
+    entry.queue?.forEach((proc) => {
+      const name = typeof proc === "object" ? proc.process : proc;
+      if (!remainingLabels.includes(name)) remainingLabels.push(name);
+    });
+    entry.arrived?.forEach((arrivedProc) => {
+      const name =
+        typeof arrivedProc === "object" ? arrivedProc.process : arrivedProc;
+      if (!remainingLabels.includes(name)) remainingLabels.push(name);
+    });
+  });
+
+  ganttChart.forEach((entry, index) => {
+    const queueDiv = document.createElement("div");
+    queueDiv.classList.add("text-center");
+    queueDiv.style.width = "40px";
+    queueDiv.style.fontSize = "14px";
+    queueDiv.style.display = "flex";
+    queueDiv.style.flexDirection = "column";
+    queueDiv.style.alignItems = "center";
+
+    // Process queue and arrived display
+    const renderProc = (proc) => {
+      const span = document.createElement("span");
+
+      const name = typeof proc === "object" ? proc.process : proc;
+      const priority = typeof proc === "object" ? proc.priority : null;
+      const isRunning = typeof proc === "object" && proc.isRunning;
+
+      span.textContent = priority ? `${name}(${priority})` : name;
+
+      // ✅ Apply slash if this process is running AND the current entry shows it completing (rbt = 0)
+      if (isRunning && entry.label === name && entry.rbt === 0) {
+        span.classList.add("slashed");
+        console.log("Slashing", name, "at time", entry.start);
+      }
+
+      queueDiv.appendChild(span);
+    };
+
+    // Remove from remainingLabels when the process appears
+    // const labelIndex = remainingLabels.indexOf(name);
+    // if (labelIndex !== -1 && isNextProcess) {
+    //   remainingLabels.splice(labelIndex, 1);
+    // }
+
+    // // Slashing condition
+    // if (isNextProcess && !remainingLabels.includes(name)) {
+    //   span.classList.add("slashed");
+    // }
+
+    // Queue display
+    entry.queue?.forEach(renderProc);
+
+    // Arrived display
+    entry.arrived?.forEach(renderProc);
+
+    q.appendChild(queueDiv);
+  });
+}
+
+// function renderQueueTimeline(ganttChart, q) {
+//   if (!q) return;
+
+//   ganttChart.forEach((entry, index) => {
+//     const queueDiv = document.createElement("div");
+//     queueDiv.classList.add("text-center");
+//     queueDiv.style.width = "40px";
+//     queueDiv.style.fontSize = "14px";
+//     queueDiv.style.display = "flex";
+//     queueDiv.style.flexDirection = "column";
+//     queueDiv.style.alignItems = "center";
+
+//     const renderProc = (proc) => {
+//       const span = document.createElement("span");
+
+//       // Normalize name and priority
+//       const name = typeof proc === "object" ? proc.process : proc;
+//       const priority = typeof proc === "object" ? proc.priority : null;
+
+//       // Label text
+//       span.textContent = priority ? `${name}(${priority})` : name;
+
+//       // Slash if it's the last time the process appears in the Gantt chart
+//       const appearsLater = ganttChart.slice(index + 1).some((g) => {
+//         const labelName =
+//           typeof g.label === "object" ? g.label.process : g.label;
+//         return labelName === name;
+//       });
+
+//       if (!appearsLater) {
+//         span.classList.add("slashed");
+//       }
+
+//       queueDiv.appendChild(span);
+//     };
+
+//     entry.queue?.forEach(renderProc);
+//     entry.arrived?.forEach(renderProc);
+
+//     q.appendChild(queueDiv);
+//   });
+// }
 
 export function renderResultTableTurnaround(result) {
   const tbody = document.querySelector("#resultTable tbody");
@@ -294,22 +439,12 @@ export function generateTimeline(result) {
   timeline.appendChild(vrline);
 }
 
-export function renderCPUUtilization(totalIdle, totalTime, result) {
+export function renderCPUUtilization(totalIdle, totalTime, ganttChart) {
   let timeline = [];
-  let prevEnd = 0;
-  let bt = 0;
 
-  result.forEach((p) => {
-    const idleTime = p.start - prevEnd;
-    for (let i = 0; i < idleTime; i++) {
-      timeline.push(1);
-    }
-
-    timeline.push(p.burst);
-    prevEnd = p.start + p.burst;
-    bt += p.burst;
+  ganttChart.forEach((p) => {
+    timeline.push(p.end - p.start);
   });
-
   const cpuUtil = ((totalTime - totalIdle) / totalTime) * 100;
   document.getElementById("cpuUtil").textContent = ` =  ${(
     (totalTime - totalIdle) /
@@ -323,7 +458,7 @@ export function renderCPUUtilization(totalIdle, totalTime, result) {
 
   // Display the number of processes
   const processCountElement = document.getElementById("process");
-  processCountElement.textContent = `${bt}`;
+  processCountElement.textContent = `${ganttChart.length}`;
 }
 
 export function updateTableHeaders(tableSelector) {
@@ -362,8 +497,19 @@ export function addRow(tableSelector) {
   const row = document.createElement("tr");
   row.innerHTML = `
     <th><div class="jobs">P${processCounter++}</div></th>
-    <td><input type="number" class="form-control shadow-none border-0 px-0" placeholder="Enter value" /></td>
-    <td><input type="number" class="form-control shadow-none border-0 px-0" placeholder="Enter value" /></td>
+    <td><input type="number" class="form-control shadow-none border-0 px-0" min="0" placeholder="Enter value" /></td>
+    <td><input type="number" class="form-control shadow-none border-0 px-0" min="0" placeholder="Enter value" /></td>
+  `;
+  tableBody.appendChild(row);
+}
+export function addRowP(tableSelector) {
+  const tableBody = document.querySelector(`${tableSelector} tbody`);
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <th><div class="jobs">P${processCounter++}</div></th>
+    <td><input type="number" class="form-control shadow-none border-0 px-0" min="0" placeholder="Enter value" /></td>
+    <td><input type="number" class="form-control shadow-none border-0 px-0" min="0" placeholder="Enter value" /></td>
+    <td><input type="number" class="form-control shadow-none border-0 px-0" min="0" placeholder="Enter value" /></td>
   `;
   tableBody.appendChild(row);
 }
@@ -399,19 +545,47 @@ export function clearTable() {
     if (el) el.innerHTML = "";
   });
 }
-
-export function getProcessData(tableSelector) {
+export function getProcessData(tableSelector, mode = "priority") {
   const rows = document.querySelectorAll(`${tableSelector} tbody tr`);
   const processes = [];
+
+  let timeQuantum = null;
+  if (mode === "roundrobin") {
+    const tqInput = document.getElementById("timeQuantum");
+    if (tqInput) {
+      const parsedTQ = parseInt(tqInput.value);
+      if (!isNaN(parsedTQ) && parsedTQ > 0) {
+        timeQuantum = parsedTQ;
+      } else {
+        console.warn("Invalid or missing time quantum input.");
+      }
+    }
+  }
+
   rows.forEach((row) => {
-    const name = row.querySelector(".jobs").textContent.trim();
-    const arrival = parseInt(row.querySelectorAll("input")[0].value);
-    const burst = parseInt(row.querySelectorAll("input")[1].value);
+    const name = row.querySelector(".jobs")?.textContent.trim();
+    const inputs = row.querySelectorAll("input");
+
+    const arrival = parseInt(inputs[0]?.value);
+    const burst = parseInt(inputs[1]?.value);
+    const extra = parseInt(inputs[2]?.value);
+
     if (!isNaN(arrival) && !isNaN(burst)) {
-      processes.push({ process: name, arrival, burst });
+      const process = {
+        process: name,
+        arrival,
+        burst,
+      };
+
+      if (mode === "priority" && !isNaN(extra)) {
+        process.priority = extra;
+      }
+
+      processes.push(process);
     }
   });
-  return processes;
+
+  return { processes, timeQuantum }; // Always return both
 }
 
 // export function renderGanttChart(result, options = {}) {
@@ -433,14 +607,13 @@ export function getProcessData(tableSelector) {
 //     start: p.start,
 //     end: p.end
 //   })));
-  
 
 //   if (algorithm === "FCFS") {
 //     result.sort((a, b) => {
 //       if (a.arrival === b.arrival) {
-//         return a.process < b.process ? -1 : 1; 
+//         return a.process < b.process ? -1 : 1;
 //       }
-//       return a.arrival - b.arrival; 
+//       return a.arrival - b.arrival;
 //     });
 //   } else if (algorithm === "SJF") {
 //     result.sort((a, b) => {
@@ -450,7 +623,7 @@ export function getProcessData(tableSelector) {
 //       return a.burst - b.burst;
 //     });
 //   }
- 
+
 //   const h = document.getElementById(containerIds.head);
 //   const b = document.getElementById(containerIds.body);
 //   const t = document.getElementById(containerIds.tail);
@@ -595,5 +768,3 @@ export function getProcessData(tableSelector) {
 //       break;
 //   }
 // }
-
-

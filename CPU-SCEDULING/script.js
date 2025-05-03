@@ -1,4 +1,3 @@
-
 import {
   renderResultTableTurnaround,
   renderResultTableWaiting,
@@ -9,34 +8,44 @@ import {
   addRow,
   deleteRow,
   clearTable,
-} from './render/render.js';
+  addRowP,
+} from "../CPU-SCEDULING/render/render.js";
 
-import { calculateFCFS } from './algorithm/fcfs.js';
-import { calculateSJF } from './algorithm/sjf.js';
-
-function scheduleAndRender(algorithm, options = {}) {
-  resetUI()
-  const processes = getProcessData('#processTable');
-  if (!processes.length) return;
+import { calculateFCFS } from "../CPU-SCEDULING/algorithm/fcfs.js";
+import { calculateSJF } from "../CPU-SCEDULING/algorithm/sjf.js";
+import { calculateNPP } from "../CPU-SCEDULING/algorithm/npp.js";
+import { calculateRR } from "../CPU-SCEDULING/algorithm/rr.js";
+function scheduleAndRender(algorithm, options = {}, mode) {
+  resetUI();
+  const { processes, timeQuantum } = getProcessData("#processTable", mode);
+  if (!processes || !processes.length) return;
 
   try {
-    const { result, totalTime, totalIdle } = algorithm(processes);
+    const output =
+      options.algorithm === "RR"
+        ? algorithm(processes, timeQuantum)
+        : algorithm(processes);
+
+    const { result, totalTime, totalIdle, ganttChart } = output;
+
     renderResultTableTurnaround(result);
     renderResultTableWaiting(result);
-    renderGanttChart(result, options); 
+    renderGanttChart(result, options, ganttChart);
     generateTimeline(result);
-    renderCPUUtilization(totalIdle, totalTime, result);
+    renderCPUUtilization(totalIdle, totalTime, ganttChart);
   } catch (error) {
-    console.error('Error during scheduling or rendering:', error);
+    console.error("Error during scheduling or rendering:", error);
   }
 }
 
-function validateTableInputs(algorithm, options = {}) {
+function validateTableInputs(algorithm, options = {}, mode) {
   let invalid = false;
   let firstInvalidInput = null;
 
   // Get all number inputs inside the table
-  const inputs = document.querySelectorAll("#processTable input[type='number']");
+  const inputs = document.querySelectorAll(
+    "#processTable input[type='number']"
+  );
 
   invalid = [...inputs].some((input) => {
     if (!input.value) {
@@ -60,54 +69,77 @@ function validateTableInputs(algorithm, options = {}) {
   }
 
   // If valid, run your computation
-  scheduleAndRender(algorithm, options);
+  scheduleAndRender(algorithm, options, mode);
 }
 
-
-
 function resetUI() {
-  ['head', 'gbody', 'tail', 'queue', 'turnaroundTable', 'waitingTable'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = '';
-  });
+  ["head", "gbody", "tail", "queue", "turnaroundTable", "waitingTable"].forEach(
+    (id) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = "";
+    }
+  );
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  const fcfsBtn = document.getElementById('calculateFCFS');
-if (fcfsBtn) {
-  fcfsBtn.addEventListener('click', () => {
-    validateTableInputs(calculateFCFS, { showQueue: true, algorithm: 'FCFS' });
-  });
-}
+  const fcfsBtn = document.getElementById("calculateFCFS");
+  if (fcfsBtn) {
+    fcfsBtn.addEventListener("click", () => {
+      validateTableInputs(calculateFCFS, {
+        showQueue: true,
+        algorithm: "FCFS",
+      });
+    });
+  }
 
-const sjfBtn = document.getElementById('calculateSJF');
-if (sjfBtn) {
-  sjfBtn.addEventListener('click', () => {
-    validateTableInputs(calculateSJF, { showQueue: true, algorithm: 'SJF' });
-  });
-}
+  const sjfBtn = document.getElementById("calculateSJF");
+  if (sjfBtn) {
+    sjfBtn.addEventListener("click", () => {
+      validateTableInputs(calculateSJF, { showQueue: true, algorithm: "SJF" });
+    });
+  }
+  const nppBtn = document.getElementById("calculateNPP");
+  if (nppBtn) {
+    nppBtn.addEventListener("click", () => {
+      validateTableInputs(calculateNPP, { showQueue: true, algorithm: "NPP" });
+    });
+  }
+  const rrBtn = document.getElementById("calculateRR");
+  if (rrBtn) {
+    rrBtn.addEventListener("click", () => {
+      validateTableInputs(
+        calculateRR,
+        { showQueue: true, algorithm: "RR" },
+        "roundrobin"
+      );
+    });
+  }
 
-const addRowBtn = document.getElementById('addrow');
-if (addRowBtn) {
-  addRowBtn.addEventListener('click', () => {
-    addRow('#processTable');
-  });
-}
+  const addRowBtn = document.getElementById("addrow");
+  if (addRowBtn) {
+    addRowBtn.addEventListener("click", () => {
+      addRow("#processTable");
+    });
+  }
 
-const deleteRowBtn = document.getElementById('deleterow');
-if (deleteRowBtn) {
-  deleteRowBtn.addEventListener('click', () => {
-    deleteRow('#processTable');
-  }); 
-}
+  const addRowBtnP = document.getElementById("addrowP");
+  if (addRowBtnP) {
+    addRowBtnP.addEventListener("click", () => {
+      addRowP("#processTable");
+    });
+  }
 
-const clearTableBtn = document.getElementById('clear');
-if (clearTableBtn) {
-  clearTableBtn.addEventListener('click', () => {
-    clearTable();
-  });
-}
+  const deleteRowBtn = document.getElementById("deleterow");
+  if (deleteRowBtn) {
+    deleteRowBtn.addEventListener("click", () => {
+      deleteRow("#processTable");
+    });
+  }
+
+  const clearTableBtn = document.getElementById("clear");
+  if (clearTableBtn) {
+    clearTableBtn.addEventListener("click", () => {
+      clearTable();
+    });
+  }
 });
-
-
-
