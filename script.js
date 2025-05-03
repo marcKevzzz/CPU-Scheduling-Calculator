@@ -9,12 +9,14 @@ import {
   deleteRow,
   clearTable,
   addRowP,
-} from "../CPU-SCEDULING/render/render.js";
+} from "../../render/render.js";
 
-import { calculateFCFS } from "../CPU-SCEDULING/algorithm/fcfs.js";
-import { calculateSJF } from "../CPU-SCEDULING/algorithm/sjf.js";
-import { calculateNPP } from "../CPU-SCEDULING/algorithm/npp.js";
-import { calculateRR } from "../CPU-SCEDULING/algorithm/rr.js";
+import { calculateFCFS } from "../../algorithm/fcfs.js";
+import { calculateSJF } from "../../algorithm/sjf.js";
+import { calculateNPP } from "../../algorithm/npp.js";
+import { calculateRR } from "../../algorithm/rr.js";
+import { calculateSRTF } from "../../algorithm/srtf.js";
+import { calculatePP } from "../../algorithm/pp.js";
 function scheduleAndRender(algorithm, options = {}, mode) {
   resetUI();
   const { processes, timeQuantum } = getProcessData("#processTable", mode);
@@ -112,6 +114,24 @@ document.addEventListener("DOMContentLoaded", function () {
         { showQueue: true, algorithm: "RR" },
         "roundrobin"
       );
+    });
+  }
+  const srtfBtn = document.getElementById("calculateSRTF");
+  if (srtfBtn) {
+    srtfBtn.addEventListener("click", () => {
+      validateTableInputs(calculateSRTF, {
+        showQueue: true,
+        algorithm: "SRTF",
+      });
+    });
+  }
+  const ppBtn = document.getElementById("calculatePP");
+  if (ppBtn) {
+    ppBtn.addEventListener("click", () => {
+      validateTableInputs(calculatePP, {
+        showQueue: true,
+        algorithm: "SRTF",
+      });
     });
   }
 

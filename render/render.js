@@ -1,83 +1,5 @@
 let turnaroundResult = [];
 
-export const fcfs = (arrivalTime, burstTime) => {
-  const processes = arrivalTime.map((at, i) => ({
-    process: (i + 10).toString(36).toUpperCase(),
-    arrival: at,
-    burst: burstTime[i],
-  }));
-
-  processes.sort((a, b) => a.arrival - b.arrival);
-
-  let currentTime = 0;
-
-  processes.forEach((p) => {
-    p.start = Math.max(currentTime, p.arrival);
-    p.end = p.start + p.burst;
-    currentTime = p.end;
-  });
-
-  return processes;
-};
-export const sjf = (arrivalTime, burstTime) => {
-  const processes = arrivalTime.map((at, i) => ({
-    process: `P${i + 1}`,
-    arrival: at,
-    burst: burstTime[i],
-    completed: false,
-  }));
-
-  const ganttChart = [];
-  let currentTime = 0;
-  let completedCount = 0;
-  const n = processes.length;
-
-  while (completedCount < n) {
-    // Get all arrived and uncompleted processes
-    const readyQueue = processes
-      .filter((p) => p.arrival <= currentTime && !p.completed)
-      .sort((a, b) => a.burst - b.burst || a.arrival - b.arrival);
-
-    // Prepare the ready queue for display (based on arrival order only)
-    const readySnapshot = processes
-      .filter((p) => p.arrival <= currentTime && !p.completed)
-      .sort((a, b) => a.arrival - b.arrival)
-      .map((p) => p.process);
-
-    if (readyQueue.length === 0) {
-      const nextArrival = Math.min(
-        ...processes.filter((p) => !p.completed).map((p) => p.arrival)
-      );
-      if (nextArrival > currentTime) {
-        ganttChart.push({
-          label: "Idle",
-          start: currentTime,
-          end: nextArrival,
-          queue: [],
-        });
-        currentTime = nextArrival;
-      }
-      continue;
-    }
-
-    const currentProcess = readyQueue[0];
-    currentProcess.start = currentTime;
-    currentProcess.end = currentTime + currentProcess.burst;
-    currentProcess.completed = true;
-
-    ganttChart.push({
-      label: currentProcess.process,
-      start: currentTime,
-      end: currentProcess.end,
-      queue: readySnapshot.filter((p) => p !== currentProcess.process),
-    });
-
-    currentTime = currentProcess.end;
-    completedCount++;
-  }
-
-  return ganttChart;
-};
 export function renderGanttChart(result, options = {}, ganttChart) {
   const {
     showQueue = true,
@@ -106,7 +28,7 @@ export function renderGanttChart(result, options = {}, ganttChart) {
   const burstDurations = [];
   const timeMarkers = [];
 
-  renderQueueTimeline(ganttChart, q);
+  renderQueueTimeline(ganttChart, q, algorithm);
 
   ganttChart.forEach((entry) => {
     timeline.push(entry.start);
@@ -126,6 +48,7 @@ export function renderGanttChart(result, options = {}, ganttChart) {
     const timeDiv = document.createElement("div");
     timeDiv.classList.add("text-start");
     timeDiv.style.width = "40px";
+    timeDiv.style.minWidth = "40px";
     timeDiv.innerHTML = `${time}`;
     if (i === allTimePoints.length - 1) {
       timeDiv.classList.add("bg-primary", "rounded", "px-2");
@@ -140,11 +63,12 @@ export function renderGanttChart(result, options = {}, ganttChart) {
     const box = document.createElement("div");
     box.classList.add("border", "p-2", "text-center");
     box.style.width = "40px";
+    box.style.minWidth = "40px";
     box.innerHTML = `<strong>${label}</strong>`;
     b.appendChild(box);
   });
 
-  if (algorithm === "RR") {
+  if (algorithm === "RR" || algorithm === "SRTF" || algorithm === "PP") {
     const headPanel = document.createElement("div");
     headPanel.classList.add("d-flex", "flex-column");
 
@@ -157,11 +81,13 @@ export function renderGanttChart(result, options = {}, ganttChart) {
     // Header Labels
     const rbtLbl = document.createElement("div");
     rbtLbl.style.width = "40px";
+    rbtLbl.style.minWidth = "40px";
     rbtLbl.innerHTML = "<strong>RBt</strong>";
     rbtHeader.appendChild(rbtLbl);
 
     const btLbl = document.createElement("div");
     btLbl.style.width = "40px";
+    btLbl.style.minWidth = "40px";
     btLbl.innerHTML = "<strong>Bt</strong>";
     btHeader.appendChild(btLbl);
 
@@ -178,9 +104,11 @@ export function renderGanttChart(result, options = {}, ganttChart) {
     ganttChart.forEach((entry) => {
       const rbtDiv = document.createElement("div");
       rbtDiv.style.width = "40px";
+      rbtDiv.style.minWidth = "40px";
 
       const btDiv = document.createElement("div");
       btDiv.style.width = "40px";
+      btDiv.style.minWidth = "40px";
 
       if (entry.label === "i") {
         rbtDiv.textContent = "";
@@ -207,76 +135,71 @@ export function renderGanttChart(result, options = {}, ganttChart) {
     burstDurations.forEach((dur) => {
       const btDiv = document.createElement("div");
       btDiv.style.width = "40px";
+      btDiv.style.minWidth = "40px";
+
       btDiv.innerHTML = `${dur}`;
       h.appendChild(btDiv);
     });
   }
 }
-function renderQueueTimeline(ganttChart, q) {
+function renderQueueTimeline(ganttChart, q, algorithm) {
   if (!q) return;
-  console.table(ganttChart.rbt);
+  q.innerHTML = ""; // Reset container
 
-  // Clear the container to reset when clicked again
-  q.innerHTML = "";
-
-  const remainingLabels = []; // Use array to track the labels that will appear
-
-  // Prepopulate the remainingLabels array with all process labels
+  const allLabels = new Set();
   ganttChart.forEach((entry) => {
-    entry.queue?.forEach((proc) => {
-      const name = typeof proc === "object" ? proc.process : proc;
-      if (!remainingLabels.includes(name)) remainingLabels.push(name);
-    });
-    entry.arrived?.forEach((arrivedProc) => {
-      const name =
-        typeof arrivedProc === "object" ? arrivedProc.process : arrivedProc;
-      if (!remainingLabels.includes(name)) remainingLabels.push(name);
-    });
+    entry.queue?.forEach((p) =>
+      allLabels.add(typeof p === "object" ? p.process : p)
+    );
+    entry.arrived?.forEach((p) =>
+      allLabels.add(typeof p === "object" ? p.process : p)
+    );
   });
+
+  // 🟢 Track processes that are already completed
+  const completedSet = new Set();
 
   ganttChart.forEach((entry, index) => {
     const queueDiv = document.createElement("div");
     queueDiv.classList.add("text-center");
     queueDiv.style.width = "40px";
+    queueDiv.style.minWidth = "40px";
     queueDiv.style.fontSize = "14px";
     queueDiv.style.display = "flex";
     queueDiv.style.flexDirection = "column";
     queueDiv.style.alignItems = "center";
 
-    // Process queue and arrived display
     const renderProc = (proc) => {
       const span = document.createElement("span");
-
       const name = typeof proc === "object" ? proc.process : proc;
       const priority = typeof proc === "object" ? proc.priority : null;
-      const isRunning = typeof proc === "object" && proc.isRunning;
 
       span.textContent = priority ? `${name}(${priority})` : name;
+      console.log(
+        "Checking slash for",
+        name,
+        "vs",
+        entry.label,
+        "RBT:",
+        entry.rbt
+      );
 
-      // ✅ Apply slash if this process is running AND the current entry shows it completing (rbt = 0)
-      if (isRunning && entry.label === name && entry.rbt === 0) {
+      // ✅ Slash only once — when it finishes
+      if (
+        (algorithm === "RR" || algorithm === "SRTF" || algorithm === "PP") &&
+        entry.label === name &&
+        entry.rbt === 0 &&
+        !completedSet.has(name)
+      ) {
         span.classList.add("slashed");
-        console.log("Slashing", name, "at time", entry.start);
+        completedSet.add(name); // Mark as completed
+        console.log("Slashing", name, "at time", entry.end);
       }
 
       queueDiv.appendChild(span);
     };
 
-    // Remove from remainingLabels when the process appears
-    // const labelIndex = remainingLabels.indexOf(name);
-    // if (labelIndex !== -1 && isNextProcess) {
-    //   remainingLabels.splice(labelIndex, 1);
-    // }
-
-    // // Slashing condition
-    // if (isNextProcess && !remainingLabels.includes(name)) {
-    //   span.classList.add("slashed");
-    // }
-
-    // Queue display
     entry.queue?.forEach(renderProc);
-
-    // Arrived display
     entry.arrived?.forEach(renderProc);
 
     q.appendChild(queueDiv);

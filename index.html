@@ -22,15 +22,14 @@
         margin: 0;
         font-family: "Afacad Flux", sans-serif;
         background-color: #f6fbff;
-        color: #0c51b9;
         overflow-x: hidden;
         padding-top: 30px;
       }
       header {
-        background: linear-gradient(135deg, #55c5fd, #0c51b9);
+        background: linear-gradient(135deg, #2b9cd4, #0c51b9);
         padding: 2rem 1rem;
         text-align: center;
-        color: #e0f7ff;
+        color: #ffffff;
       }
       header h1 {
         font-size: 2.8rem;
@@ -61,12 +60,10 @@
       .intro-section h2 {
         font-size: 2rem;
         margin-bottom: 1rem;
-        color: #0088cc;
       }
       .intro-section p {
         font-size: 1.15rem;
         line-height: 1.6;
-        color: #004d99;
         margin-bottom: 2rem;
       }
 
@@ -74,13 +71,12 @@
         background: #f4faff;
         border-radius: 12px;
         padding: 2rem;
-        max-width: 500px;
+        width: 500px;
         box-shadow: 0 7px 15px rgba(88, 88, 88, 0.575);
       }
       .features-section h3 {
         font-size: 1.8rem;
         margin-bottom: 1rem;
-        color: #005fa3;
         text-align: center;
       }
       .feature-list {
@@ -99,7 +95,6 @@
         content: "✔";
         position: absolute;
         left: 0;
-        color: #0077cc;
         font-weight: bold;
       }
 
@@ -109,7 +104,7 @@
         width: 350px;
         height: 350px;
         margin: auto;
-        margin-top: 2em;
+        padding-top: 7em;
       }
 
       /* 3D cube */
@@ -167,14 +162,6 @@
         transform: rotateX(-90deg) translateZ(100px);
       }
 
-      /* Footer */
-      footer {
-        text-align: center;
-        padding: 1rem 1rem 2rem;
-        color: #668cb3;
-        font-size: 0.9rem;
-      }
-
       /* Responsive adjustments */
       @media (max-width: 900px) {
         main {
@@ -184,6 +171,7 @@
         .cube-container {
           width: 280px;
           height: 280px;
+          margin-bottom: 5em;
         }
         .cube {
           width: 160px;
@@ -194,6 +182,13 @@
           height: 160px;
           font-size: 1.3rem;
           border-radius: 14px;
+        }
+        .features-section {
+          width: 80% !important;
+        }
+        .intro-section,
+        main {
+          height: fit-content !important;
         }
       }
     </style>
@@ -247,9 +242,7 @@
               class="navbar-nav justify-content-center align-items-center flex-grow-1 pe-3"
             >
               <li class="nav-item">
-                <a class="nav-link mx-2 px-3 active" href="../src/index.html"
-                  >Home</a
-                >
+                <a class="nav-link mx-2 px-3 active" href="#">Home</a>
               </li>
 
               <li class="nav-item dropdown">
@@ -268,35 +261,39 @@
                   aria-labelledby="navbarDropdown"
                 >
                   <li>
-                    <a class="dropdown-item py-2" href="../src/fcfs.html"
+                    <a class="dropdown-item py-2" href="../../src/fcfs.html"
                       >First Come First Serve</a
                     >
                   </li>
                   <li>
-                    <a class="dropdown-item py-2" href="../src/sjf.html"
+                    <a class="dropdown-item py-2" href="../../src/sjf.html"
                       >Shortest Job Next</a
                     >
                   </li>
                   <li>
-                    <a class="dropdown-item py-2" href="../src/npp.html"
+                    <a class="dropdown-item py-2" href="../../src/npp.html"
                       >Non-Preemptive Priority</a
                     >
                   </li>
                   <li>
-                    <a class="dropdown-item py-2" href="#">Round Robin</a>
+                    <a class="dropdown-item py-2" href="../../src/rr.html"
+                      >Round Robin</a
+                    >
                   </li>
                   <li>
-                    <a class="dropdown-item py-2" href="#">Shortest Job </a>
+                    <a class="dropdown-item py-2" href="../../src/srtf.html"
+                      >Shortest Remaining Time First
+                    </a>
                   </li>
                   <li>
-                    <a class="dropdown-item py-2" href="#"
+                    <a class="dropdown-item py-2" href="../.../src/pp.html"
                       >Preemptive Priority</a
                     >
                   </li>
                 </ul>
               </li>
               <li class="nav-item">
-                <a class="nav-link mx-2 px-3" href="#">About</a>
+                <a class="nav-link mx-2 px-3" href="../about-us.html">About</a>
               </li>
             </ul>
             <div
@@ -308,20 +305,22 @@
         </div>
       </div>
     </nav>
-
-    <header>
-      <h1>CPU Scheduling Calculator</h1>
-      <p>
-        Optimize your system’s performance by understanding and experimenting
-        with CPU scheduling algorithms using our interactive calculator.
-      </p>
-    </header>
+    <section class="cube-container" aria-label="3D CPU graphic element">
+      <div class="cube" aria-hidden="true">
+        <div class="face front">CPU</div>
+        <div class="face back">Scheduling</div>
+        <div class="face right">Calculator</div>
+        <div class="face left">Performance</div>
+        <div class="face top">Efficiency</div>
+        <div class="face bottom">Process</div>
+      </div>
+    </section>
     <main>
       <section
         class="intro-section"
         aria-label="Introduction to CPU Scheduling"
       >
-        <h2>Introduction to CPU Scheduling</h2>
+        <h2 class="fs-2 fw-bold">Introduction to CPU Scheduling</h2>
         <p>
           CPU scheduling is a fundamental concept in operating systems that
           manages the execution order of processes on the CPU. By allocating CPU
@@ -344,20 +343,10 @@
           <li>User-friendly and responsive interface</li>
         </ul>
       </aside>
-
-      <section class="cube-container" aria-label="3D CPU graphic element">
-        <div class="cube" aria-hidden="true">
-          <div class="face front">CPU</div>
-          <div class="face back">Scheduling</div>
-          <div class="face right">Calculator</div>
-          <div class="face left">Performance</div>
-          <div class="face top">Efficiency</div>
-          <div class="face bottom">Process</div>
-        </div>
-      </section>
     </main>
+
     <footer>
-      <p>© 2025 CPU Scheduling Calculator. Learn and optimize with ease.</p>
+      <footer>&copy; 2025 KVZ. All rights reserved.</footer>
     </footer>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

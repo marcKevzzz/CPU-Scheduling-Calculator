@@ -315,3 +315,144 @@ div.bg-primary.px-2 {
   font-family: "Azeret Mono", sans-serif;
   font-weight: 600;
 }
+
+/* ABOUT US PAGE */
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Nunito", sans-serif;
+}
+
+.containers {
+  padding: 7em 10vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero {
+  display: flex;
+  gap: 4em;
+}
+.hero-image img {
+  width: 40vw;
+}
+.cards {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 30px;
+  gap: 30px;
+  transition: transform 0.3s ease;
+}
+.cards:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+.avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #007bff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+.contents {
+  flex: 1;
+  text-align: left;
+}
+.name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0;
+}
+.title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #007bff;
+  margin-bottom: 25px;
+}
+.description {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+.social-links {
+  display: flex;
+  gap: 20px;
+}
+.social-links a {
+  color: #555;
+  font-size: 1.5rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.social-links a:hover {
+  color: #007bff;
+}
+
+footer {
+  margin-top: 5em;
+  font-size: 0.85em;
+  color: #6c757d;
+  text-align: center;
+  padding-bottom: 1em;
+}
+@media (max-width: 800px) {
+  .hero {
+    flex-direction: column-reverse;
+    gap: 2em;
+  }
+  .hero-image img {
+    width: 90%;
+    margin: auto;
+  }
+  .hero-image {
+    padding-inline: 2em;
+  }
+  .containers {
+    padding: 1em;
+    padding-top: 5em;
+  }
+  .cards {
+    flex-direction: column;
+    max-width: 400px;
+    padding: 20px 15px;
+    gap: 15px;
+    width: 100%;
+  }
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-width: 4px;
+  }
+  .contents {
+    text-align: left;
+  }
+  .name {
+    font-size: 1.6rem;
+  }
+  .title {
+    font-size: 1rem;
+  }
+  .social-links {
+    justify-content: center;
+  }
+}
+.p {
+  margin-bottom: 0;
+}

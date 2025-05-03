@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About Us - CPU Scheduling Calculator</title>
+    <!-- Bootstrap CSS CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="../style/style.css" />
+  </head>
+  <body class="d-flex flex-column">
+    <nav class="navbar navbar-expand-lg bg-transparent" style="height: 60px">
+      <div
+        class="fixed-top mt-1 py-1 bg-light rounded shadow-sm ms-3 px-2 d-flex justify-content-between"
+      >
+        <a
+          class="navbar-brand fs-5 d-flex flex-column justify-content-center align-items-center"
+          href="#"
+          >CPU Scheduling <span>Calculator</span></a
+        >
+
+        <!-- Nav Button -->
+        <button
+          class="navbar-toggler shadow-none border-0"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasNavbar"
+          aria-controls="offcanvasNavbar"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Sidebar -->
+        <div
+          class="sidebar offcanvas offcanvas-end justify-content-center"
+          tabindex="-1"
+          id="offcanvasNavbar"
+          aria-labelledby="offcanvasNavbarLabel"
+        >
+          <!-- Sidebar header -->
+          <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
+              CPU Scheduling
+            </h5>
+            <button
+              type="button"
+              class="btn-close shadow-none border-0"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <!-- Sidebar body -->
+          <div class="offcanvas-body d-flex flex-column p-4 flex-lg-row p-lg-0">
+            <ul
+              class="navbar-nav justify-content-center align-items-center flex-grow-1 pe-3"
+            >
+              <li class="nav-item">
+                <a class="nav-link mx-2 px-3" href="../index.html">Home</a>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle mx-2 px-3"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Algorithm
+                </a>
+                <ul
+                  class="dropdown-menu border-0"
+                  aria-labelledby="navbarDropdown"
+                >
+                  <li>
+                    <a class="dropdown-item py-2" href="../../src/fcfs.html"
+                      >First Come First Serve</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2" href="../../src/sjf.html"
+                      >Shortest Job Next</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2" href="../../src/npp.html"
+                      >Non-Preemptive Priority</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2" href="../../src/rr.html"
+                      >Round Robin</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2" href="../../src/srtf.html"
+                      >Shortest Remaining Time First
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item py-2" href="../../src/pp.html"
+                      >Preemptive Priority</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link mx-2 px-3 active" href="#">About</a>
+              </li>
+            </ul>
+            <div
+              class="kvs d-flex d-flex-row align-items-center justify-content-center px-2 fs-6"
+            >
+              KVZ
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <main class="containers">
+      <div class="hero">
+        <div class="hero-text flex-grow-1 d-flex flex-column gap-3">
+          <h1 class="fs-2 fw-bold">
+            Changing the way we analyze CPU performance
+          </h1>
+          <p class="contents">
+            This CPU Scheduling Calculator is built to help students,
+            developers, and system analysts simulate and understand various
+            scheduling algorithms such as FCFS, SJF, Round Robin, and
+            Priority-based methods. With intuitive visuals and detailed
+            breakdowns of each process's behavior, the tool makes learning CPU
+            scheduling more interactive and insightful.
+          </p>
+        </div>
+        <div class="hero-image">
+          <img src="../img/cal.jpg" alt="3D CPU Scheduler Graphic" />
+        </div>
+      </div>
+
+      <section class="mt-5">
+        <h1 class="fs-2 fw-bold">About me</h1>
+        <div class="cards" role="region" aria-label="About Me Card">
+          <img
+            src="../img/raiden.gif"
+            alt="Profile Picture"
+            class="avatar"
+            loading="lazy"
+          />
+          <div class="contents">
+            <h1 class="name">MarcKvz</h1>
+            <p class="title">Frontend Developer</p>
+            <p class="description">
+              An IT student by day, a Web Developer-in-training by night—and
+              somewhere in between, exploring Teyvat one quest at a time.
+              Whether it's debugging code or farming Primogems, I always grind
+              with purpose!
+            </p>
+            <div class="social-links" aria-label="Social Media Links">
+              <a
+                href="https://github.com/marcKevzzz/CPU-Scheduling-Calculator"
+                aria-label="GitHub"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="GitHub"
+              >
+                <i class="bi bi-github"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/marckevss/?next=%2F"
+                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Instagram "
+              >
+                <i class="bi bi-instagram"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>&copy; 2025 KVZ. All rights reserved.</footer>
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <!-- Bootstrap JS Bundle CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

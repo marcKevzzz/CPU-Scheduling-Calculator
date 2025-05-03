@@ -38,6 +38,7 @@ export function calculateNPP(processes) {
                 proc.arrival <= t &&
                 !completed.some((c) => c.process === proc.process)
             )
+            .sort((a, b) => a.arrival - b.arrival) // 🔄 Sort by arrival
             .map((proc) => ({
               process: proc.process,
               priority: proc.priority,
@@ -80,6 +81,7 @@ export function calculateNPP(processes) {
             !completed.some((c) => c.process === proc.process) &&
             proc.process !== p.process
         )
+        .sort((a, b) => a.arrival - b.arrival) // 🔄 Sort by arrival
         .map((proc) => ({
           process: proc.process,
           priority: proc.priority,

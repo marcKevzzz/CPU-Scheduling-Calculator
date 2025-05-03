@@ -14,52 +14,38 @@ export function calculateRR(processes, timeQuantum) {
   let totalIdle = 0;
 
   while (completed.length < n) {
-    // Add newly arrived processes to queue
-    remaining.forEach((p) => {
-      if (
-        p.arrival <= currentTime &&
-        !addedToQueue.has(p.process) &&
-        p.remaining > 0
-      ) {
+    // Add newly arrived processes in order of arrival
+    remaining
+      .filter(
+        (p) =>
+          p.arrival <= currentTime &&
+          !addedToQueue.has(p.process) &&
+          p.remaining > 0
+      )
+      .sort((a, b) => a.arrival - b.arrival)
+      .forEach((p) => {
         readyQueue.push(p);
         addedToQueue.add(p.process);
-      }
-    });
+      });
 
     if (readyQueue.length === 0) {
-      // CPU idle: wait for next process to arrive
-      const nextArrival = remaining.find(
+      const future = remaining.filter(
         (p) => p.remaining > 0 && p.arrival > currentTime
       );
-      if (nextArrival) {
-        const idleStart = currentTime;
-        const idleEnd = nextArrival.arrival;
-
-        const idleQueue = remaining
-          .filter((p) => p.arrival <= idleStart && p.remaining > 0)
-          .map((p) => ({
-            process: p.process,
-            priority: p.priority || null,
-          }));
-
-        const arrived = remaining
-          .filter((p) => p.arrival > idleStart && p.arrival <= idleEnd)
-          .map((p) => ({
-            process: p.process,
-            priority: p.priority || null,
-          }));
-
+      if (future.length > 0) {
+        const nextArrival = Math.min(...future.map((p) => p.arrival));
         ganttChart.push({
           label: "i",
-          start: idleStart,
-          end: idleEnd,
-          queue: idleQueue,
-          arrived,
+          start: currentTime,
+          end: nextArrival,
+          rbt: null,
+          queue: [],
+          arrived: future
+            .filter((p) => p.arrival <= nextArrival)
+            .map((p) => ({ process: p.process })),
         });
-
-        totalIdle += idleEnd - idleStart;
-        currentTime = idleEnd;
-
+        totalIdle += nextArrival - currentTime;
+        currentTime = nextArrival;
         continue;
       } else {
         break;
@@ -68,50 +54,46 @@ export function calculateRR(processes, timeQuantum) {
 
     const p = readyQueue.shift();
 
-    if (!p.remaining || isNaN(p.remaining)) {
-      console.warn("Invalid remaining burst time for process:", p);
-      continue;
-    }
-
     if (p.start === null) {
       p.start = currentTime;
     }
 
-    const executionTime = Math.min(timeQuantum, p.remaining);
+    const execTime = Math.min(timeQuantum, p.remaining);
     const start = currentTime;
-    const end = start + executionTime;
-
-    p.remaining -= executionTime;
+    const end = currentTime + execTime;
+    p.remaining -= execTime;
     currentTime = end;
 
-    const queueDuring = remaining
-      .filter((proc) => proc.arrival <= currentTime && proc.remaining > 0)
-      .map((proc) => ({
-        process: proc.process,
-        priority: proc.priority || null,
-        isRunning: proc.process === p.process,
-      }));
-
-    // Instead of the process label, we now include the remaining burst time
-    ganttChart.push({
-      label: p.process, // Change this to show remaining burst time
-      start,
-      end,
-      queue: queueDuring,
-      rbt: p.remaining, // ✅ Add RBt here
-    });
-
-    // Add new arrivals during execution
-    remaining.forEach((proc) => {
-      if (
-        proc.arrival > start &&
-        proc.arrival <= end &&
-        proc.remaining > 0 &&
-        !addedToQueue.has(proc.process)
-      ) {
+    // Add newly arrived processes DURING execution
+    remaining
+      .filter(
+        (proc) =>
+          proc.arrival > start &&
+          proc.arrival <= end &&
+          proc.remaining > 0 &&
+          !addedToQueue.has(proc.process)
+      )
+      .sort((a, b) => a.arrival - b.arrival)
+      .forEach((proc) => {
         readyQueue.push(proc);
         addedToQueue.add(proc.process);
-      }
+      });
+
+    const displayQueue = [...readyQueue]
+      .filter((proc) => proc.remaining > 0)
+      .sort((a, b) => a.arrival - b.arrival)
+      .map((proc) => ({
+        process: proc.process,
+        remaining: proc.remaining,
+        arrival: proc.arrival,
+      }));
+
+    ganttChart.push({
+      label: p.process,
+      start,
+      end,
+      rbt: p.remaining,
+      queue: displayQueue,
     });
 
     if (p.remaining > 0) {
@@ -128,7 +110,6 @@ export function calculateRR(processes, timeQuantum) {
     }
   }
 
-  console.table(completed);
   console.table(ganttChart);
 
   return {
