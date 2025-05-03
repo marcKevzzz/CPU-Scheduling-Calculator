@@ -10,7 +10,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="../style/style.css" />
+    <link rel="stylesheet" href="./style/style.css" />
     <title>Home — CPU SCHEDULING</title>
   </head>
   <body>
@@ -370,22 +370,8 @@
     </main>
 
     <!--  -->
-    <script src="../script.js" type="module"></script>
+    <script src="./script.js" type="module"></script>
     <script>
-      const themeToggle = document.getElementById("themeToggle");
-      const themeIcon = document.getElementById("themeIcon");
-      themeToggle.addEventListener("click", () => {
-        document.body.classList.toggle("bg-dark");
-        document.body.classList.toggle("text-light");
-        if (document.body.classList.contains("bg-dark")) {
-          themeIcon.classList.remove("bi-sun");
-          themeIcon.classList.add("bi-moon");
-        } else {
-          themeIcon.classList.remove("bi-moon");
-          themeIcon.classList.add("bi-sun");
-        }
-      });
-
       window.addEventListener("scroll", function () {
         const header = document.getElementById("header1");
 
