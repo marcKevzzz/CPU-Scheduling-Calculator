@@ -71,13 +71,16 @@
         background: #f4faff;
         border-radius: 12px;
         padding: 2rem;
-        width: 500px;
+        width: fit-content;
         box-shadow: 0 7px 15px rgba(88, 88, 88, 0.575);
+
       }
       .features-section h3 {
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
         text-align: center;
+        font-weight: bold;
+
       }
       .feature-list {
         list-style: none;
@@ -85,11 +88,14 @@
         margin: 0;
       }
       .feature-list li {
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
         font-size: 1.1rem;
         padding-left: 1.5rem;
         position: relative;
         color: #003366;
+        text-align: center;
+        width: fit-content;
+        margin-inline: auto;
       }
       .feature-list li::before {
         content: "✔";
@@ -245,52 +251,16 @@
                 <a class="nav-link mx-2 px-3 active" href="#">Home</a>
               </li>
 
-              <li class="nav-item dropdown">
+              <li class="nav-item ">
                 <a
-                  class="nav-link dropdown-toggle mx-2 px-3"
-                  href="#"
-                  id="navbarDropdown"
+                  class="nav-link  mx-2 px-3"
+                  href="./src/algorithm.html"
                   role="button"
-                  data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   Algorithm
                 </a>
-                <ul
-                  class="dropdown-menu border-0"
-                  aria-labelledby="navbarDropdown"
-                >
-                  <li>
-                    <a class="dropdown-item py-2" href="./src/fcfs.html"
-                      >First Come First Serve</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="./src/sjf.html"
-                      >Shortest Job Next</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="./src/npp.html"
-                      >Non-Preemptive Priority</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="./src/rr.html"
-                      >Round Robin</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="./src/srtf.html"
-                      >Shortest Remaining Time First
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item py-2" href="./src/pp.html"
-                      >Preemptive Priority</a
-                    >
-                  </li>
-                </ul>
+                
               </li>
               <li class="nav-item">
                 <a class="nav-link mx-2 px-3" href="./about-us.html">About</a>
@@ -327,7 +297,7 @@
           time effectively, it maximizes system efficiency, reduces waiting
           time, and improves overall performance.
         </p>
-        <a class="btn btn-primary px-4" href="./src/fcfs.html"> Try Now</a>
+        <a class="btn btn-primary px-4" href="./src/algorithm.html"> Try Now</a>
       </section>
 
       <aside

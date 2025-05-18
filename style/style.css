@@ -21,6 +21,11 @@ body {
   padding: 0;
 }
 
+main {
+  display: flex;
+  flex-direction: row;
+}
+
 @media screen and (max-width: 991px) {
   .sidebar {
     background-color: var(--background-color-nav);
@@ -59,15 +64,25 @@ body {
   .table-edit-btn.d-flex {
     flex-direction: row;
     width: 100%;
+    flex-grow: 1;
+  }
+  .table-edit-btn button {
+    padding-inline: 2em;
+    margin-block: 0.3em;
+    flex-grow: 1;
+  }
 
-    button {
-      padding-inline: 3em;
-      margin-block: 0.5em;
-    }
+  .aside-nav {
+    flex-direction: column-reverse !important;
+    position: static !important;
+  }
+
+  .mains {
+    flex-direction: column;
   }
 
   #processTable {
-    width: 90vw !important;
+    width: calc(94vw - 5%) !important;
   }
   article.d-flex {
     width: fit-content;
@@ -77,30 +92,8 @@ body {
   .fixed-top.mt-1 {
     margin: 0.5em !important;
   }
-  .aside {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 1030;
-    transform: translateX(-150%);
-    transition: transform 0.3s ease-in-out;
-  }
 
-  .aside.show {
-    transform: translateX(0);
-  }
-
-  .aside .nav-link {
-    padding: 1rem;
-  }
-  aside {
-    position: fixed;
-    transform: translateX(-150%);
-  }
-
-  main.d-flex {
+  main {
     margin-top: 0.8em !important;
     padding-inline: 0.5em !important;
   }
@@ -110,17 +103,19 @@ body {
   }
 }
 
+.hide {
+  display: none !important;
+}
+.tracking-tighter {
+  letter-spacing: -1px;
+  font-size: 0.9em;
+}
 @media screen and (max-width: 480px) {
   .table-edit-btn.d-flex {
     button {
-      padding-block: 0.3em !important;
+      padding-block: 0.2em !important;
+      padding-inline: 0 !important;
     }
-  }
-  #processTable tr:first-of-type,
-  #processTable th:first-of-type {
-    width: 50px !important;
-    max-width: 120px;
-    min-width: fit-content;
   }
 }
 
@@ -131,6 +126,12 @@ body {
     color: var(--dark-color);
     font-size: 30px !important;
   }
+}
+
+.aside-nav {
+  position: sticky;
+  top: 5rem;
+  height: fit-content;
 }
 
 a.navbar-brand.fs-5 span {
@@ -152,16 +153,21 @@ a.active {
 }
 
 .table-btn {
-  gap: 2.5em;
+  gap: 1.5em;
 }
 
 .table-edit-btn {
   flex-direction: column;
-  width: 13em;
+  flex-grow: 1;
+
+  button {
+    max-width: 15rem;
+  }
 }
 
 .jobs {
   padding-top: 0.3em;
+  text-align: center;
 }
 
 article.d-flex {
@@ -175,6 +181,16 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+*::-webkit-scrollbar {
+  width: 0.3em;
+  height: 0.3em;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: 20px;
+}
+
 input.is-invalid {
   background-color: var(--background-color);
 }
@@ -183,12 +199,6 @@ input.is-invalid {
   width: 100%;
 }
 
-#processTable tr:first-of-type,
-#processTable th:first-of-type {
-  width: 120px;
-  max-width: 120px;
-  min-width: fit-content;
-}
 .addrow,
 .deleterow {
   cursor: pointer;
@@ -201,18 +211,32 @@ p.navbar-brand {
   margin-top: 1em;
 }
 
+.aside-nav {
+  display: flex;
+  flex-direction: column;
+}
+
 /* chatgpt */
 
-#ganttChart {
+#ganttChart,
+#cpuResult {
   margin-top: 1rem;
   overflow-x: auto;
   width: 100%;
+  max-width: fit-content;
+}
+
+#timeline-responsive {
+  overflow-x: auto;
+  width: 100%;
+  max-width: fit-content;
 }
 #ganttChart div {
   border-radius: 5px;
 }
 
-#tail {
+#tail,
+#queue {
   margin-left: -5px;
 }
 
@@ -223,7 +247,6 @@ p.navbar-brand {
 /*  */
 
 #timeline {
-  white-space: nowrap;
   align-items: flex-end;
   position: relative;
   width: fit-content;
@@ -232,6 +255,8 @@ p.navbar-brand {
 .timeline-block {
   border-radius: 4px;
   border: none;
+  width: 60px;
+  min-width: 60px;
 }
 
 .timeline-hrline {
@@ -303,10 +328,10 @@ div.bg-primary.px-2 {
 .slashed::after {
   content: "";
   position: absolute;
-  top: 50%;
+  top: 42%;
   left: -10%;
   height: 2px;
-  width: 110%;
+  width: 70%;
   background: rgba(0, 0, 0, 0.548);
   transform: rotate(25deg);
 }
@@ -455,4 +480,10 @@ footer {
 }
 .p {
   margin-bottom: 0;
+}
+
+.btn-check:checked + .btn {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
 }
