@@ -29,16 +29,18 @@ export function calculateRR(processes, quantum) {
       // Idle time handling
       currentTime++;
 
-      const arrived = [];
       while (i < n && remaining[i].arrival <= currentTime) {
         queue.push(remaining[i]);
-        arrived.push({
-          process: remaining[i].process,
-          priority: remaining[i].priority || null,
-          rbt: remaining[i].burst,
-        });
         i++;
       }
+
+      const arrived = remaining
+        .filter((p) => p.arrival <= currentTime && p.remaining > 0)
+        .map((p) => ({
+          process: p.process,
+          priority: p.priority || null,
+          rbt: p.remaining,
+        }));
 
       ganttChart.push({
         label: "i",
@@ -63,28 +65,44 @@ export function calculateRR(processes, quantum) {
 
     if (current.start === null) current.start = currentTime;
 
-    const queueBefore = queue.map((p) => ({
-      process: p.process,
-      priority: p.priority || null,
-      rbt: p.remaining,
-    }));
-
     // Simulate execution for each unit of the quantum
     for (let t = 0; t < executionTime; t++) {
       currentTime++;
 
       while (i < n && remaining[i].arrival <= currentTime) {
-        queue.push(remaining[i]);
-        arrivedDuring.push({
-          process: remaining[i].process,
-          priority: remaining[i].priority || null,
-          rbt: remaining[i].burst,
-        });
+        const arriving = remaining[i];
+        queue.push(arriving);
+        // Only add to arrivedDuring if the process is not already in the queue
+        if (!queue.some((p) => p.process === arriving.process)) {
+          arrivedDuring.push({
+            process: arriving.process,
+            priority: arriving.priority || null,
+            rbt: arriving.remaining,
+          });
+        }
         i++;
       }
     }
 
     current.remaining -= executionTime;
+
+    let queueBefore = queue.map((p) => ({
+      process: p.process,
+      priority: p.priority || null,
+      rbt: p.remaining,
+    }));
+
+    // Include the current process in the queue snapshot ONLY if it's not yet finished
+    if (current.remaining > 0) {
+      queueBefore = [
+        {
+          process: current.process,
+          priority: current.priority || null,
+          rbt: current.remaining,
+        },
+        ...queueBefore,
+      ];
+    }
 
     if (current.remaining > 0) {
       queue.push(current); // return to queue
