@@ -92,24 +92,7 @@ export function renderGanttChart(result, options = {}, ganttChart) {
     btLbl.innerHTML = "Bt";
     btHeader.appendChild(btLbl);
 
-    // Build burst map for each process
-    // const burstDurationsMap = {};
-    // ganttChart.forEach((entry, i) => {
-    //   if (entry.label !== "i") {
-    //     burstDurationsMap[entry.label] ??= 0;
-    //     burstDurationsMap[entry.label] += burst[i] - (entry.end - entry.start);
-    //   }
-    // });
-
-    const originalBurstMap = {};
-    result.forEach((proc) => {
-      originalBurstMap[proc.process ?? proc.label] = proc.burst;
-    });
-    const rbtMap = {};
-    const appearedProcesses = new Set();
-
     // Add RBt and Bt per Gantt chart entry
-
     ganttChart.forEach((entry) => {
       const rbtDiv = document.createElement("div");
       rbtDiv.style.width = "42px";
@@ -121,22 +104,16 @@ export function renderGanttChart(result, options = {}, ganttChart) {
 
       if (entry.label === "i") {
         rbtDiv.textContent = "";
-        btDiv.textContent = "1"; // Idle time
+        btDiv.textContent = (
+          entry.burstUsed ?? entry.end - entry.start
+        ).toString();
+        // idle burst (usually 1)
       } else {
         rbtDiv.textContent = entry.rbt === 0 ? "" : entry.rbt ?? "";
-
-        if (appearedProcesses.has(entry.label)) {
-          // Process already appeared before - show remaining burst time from rbtMap
-          btDiv.textContent = rbtMap[entry.label];
-          // Update rbtMap with latest rbt for next appearance
-          rbtMap[entry.label] = entry.rbt;
-        } else {
-          // First appearance - show original burst time
-          btDiv.textContent = originalBurstMap[entry.label] ?? "";
-          appearedProcesses.add(entry.label);
-          // Initialize rbtMap for the process with its current rbt
-          rbtMap[entry.label] = entry.rbt;
-        }
+        btDiv.textContent = (
+          entry.burstUsed ?? entry.end - entry.start
+        ).toString();
+        // Actual burst used per Gantt slice
       }
 
       rbtHeader.appendChild(rbtDiv);
