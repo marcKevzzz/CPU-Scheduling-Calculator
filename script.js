@@ -157,17 +157,18 @@ function validateTableInputs(algorithm, options = {}, mode) {
   if (hide) {
     hide.classList.remove("hide");
   }
+  showToast("Calculate successful.", true);
   // If valid, run your computation
   scheduleAndRender(algorithm, options, mode);
 }
 
 function resetUI() {
-  ["head", "gbody", "tail", "queue", "turnaroundTable", "waitingTable"].forEach(
-    (id) => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = "";
-    }
-  );
+  ["head", "gbody", "tail", "queue", "timeline"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = "";
+  });
+  document.querySelector("#resultTableWaitingTime tbody").innerHTML = "";
+  document.querySelector("#resultTable tbody").innerHTML = "";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -207,6 +208,28 @@ document.addEventListener("DOMContentLoaded", function () {
       algorithmValue = "";
       // updateTableColumns("");
       resetUI(algorithmValue);
+      document.getElementById("cpuResult").classList.add("hide");
+
+      const tbody = document.querySelector("#processTable .body");
+
+      tbody.innerHTML = `
+    <tr>
+      <th><div class="jobs">P1</div></th>
+      <td><input type="number" min="0" placeholder="Enter value" class="form-control shadow-none border-0 px-0" /></td>
+      <td><input type="number" min="0" placeholder="Enter value" class="form-control shadow-none border-0 px-0" /></td>
+    </tr>
+    <tr>
+      <th><div class="jobs">P2</div></th>
+      <td><input type="number" min="0" placeholder="Enter value" class="form-control shadow-none border-0 px-0" /></td>
+      <td><input type="number" min="0" placeholder="Enter value" class="form-control shadow-none border-0 px-0" /></td>
+    </tr>
+    <tr>
+      <th><div class="jobs">P3</div></th>
+      <td><input type="number" min="0" placeholder="Enter value" class="form-control shadow-none border-0 px-0" /></td>
+      <td><input type="number" min="0" placeholder="Enter value" class="form-control shadow-none border-0 px-0" /></td>
+    </tr>
+  `;
+
       showToast("Calculation restart!", true);
     });
   }
