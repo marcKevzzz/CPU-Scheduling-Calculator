@@ -154,9 +154,11 @@ function validateTableInputs(algorithm, options = {}, mode) {
   }
 
   const hide = document.querySelectorAll(".hide");
-  if (hide) {
-    hide.forEach((h) => {classList.remove("hide")});
-  }
+if (hide.length > 0) {
+  hide.forEach((h) => {
+    h.classList.remove("hide");
+  });
+}
   showToast("Calculate successful.", true);
   // If valid, run your computation
   scheduleAndRender(algorithm, options, mode);
