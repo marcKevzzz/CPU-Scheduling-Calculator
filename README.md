@@ -6,19 +6,25 @@ A minimalist web-based tool for simulating and visualizing CPU scheduling algori
 ## 📷 Screenshots
 
 ### 🔹 Home Page
-![Home Page](<img width="1920" height="955" alt="image" src="https://github.com/user-attachments/assets/2e76d4b9-f2d3-4d04-a5eb-943aeb01a12c" />)
+![Home Page](screenshots/home.png)
 
 ### 🔹 Input Form
-![Input Form](<img width="1920" height="952" alt="image" src="https://github.com/user-attachments/assets/1100dd72-63c1-4ff7-97b4-0412278819b8" />)
+<p align="center">
+  <img src="screenshots/nppgant.png" width="45%" alt="Input 1"/>
+  <img src="screenshots/rrgant.png" width="45%" alt="Input 2"/>
+</p>
 
 ### 🔹 Gantt Chart Output
-![Gantt Chart](<img width="1920" height="357" alt="image" src="https://github.com/user-attachments/assets/44511213-128b-4160-8629-6dcc2302889c" />)
+<p align="center">
+  <img src="screenshots/npp.png" width="45%" alt="Gantt Chart 1"/>
+  <img src="screenshots/rr.png" width="45%" alt="Gantt Chart 2"/>
+</p>
 
 ### 🔹 Table Output
-![Table](<img width="1920" height="880" alt="image" src="https://github.com/user-attachments/assets/070ec582-429e-48a6-9fc4-0c5b5af611ae" />)
+![Table](screenshots/table.png)
 
 ### 🔹 About Page
-![About Page](<img width="1920" height="954" alt="image" src="https://github.com/user-attachments/assets/205b29f8-4b30-4dfe-8540-65ae5ecdef47" />)
+![About Page](screenshots/about.png)
 
 ---
 
