@@ -11,7 +11,6 @@ export function calculateSRTF(processes) {
 
   let currentTime = 0;
   let totalIdle = 0;
-  let lastProcess = null;
 
   while (completed.length < processes.length) {
     const readyQueue = remaining
@@ -23,51 +22,66 @@ export function calculateSRTF(processes) {
       );
 
     if (readyQueue.length === 0) {
-      const arrivedDuringIdle = remaining
-        .filter((p) => p.arrival <= currentTime + 1 && p.remaining > 0)
+      const nextArrival = remaining
+        .filter((p) => p.remaining > 0)
+        .sort((a, b) => a.arrival - b.arrival)[0]?.arrival;
 
-        .map((p) => ({
-          process: p.process,
-          priority: p.priority || null,
-          burst: p.remaining, // Show remaining burst instead of original burst
-          rbt: p.remaining,
-        }));
+      if (nextArrival !== undefined && nextArrival > currentTime) {
+        ganttChart.push({
+          label: "i",
+          start: currentTime,
+          end: nextArrival,
+          queue: [],
+          arrived: remaining
+            .filter((p) => p.arrival <= nextArrival && p.remaining > 0)
+            .map((p) => ({
+              process: p.process,
+              priority: p.priority || null,
+              burst: p.remaining,
+              rbt: p.remaining,
+            })),
+          rbt: null,
+        });
 
-      ganttChart.push({
-        label: "i",
-        start: currentTime,
-        end: currentTime + 1,
-        queue: [],
-        arrived: arrivedDuringIdle.length > 0 ? arrivedDuringIdle : null,
-        rbt: null,
-      });
-
-      totalIdle++;
-      currentTime++;
-      lastProcess = null;
-      continue;
+        totalIdle += nextArrival - currentTime;
+        currentTime = nextArrival;
+        continue;
+      } else {
+        break;
+      }
     }
 
     const currentProc = readyQueue[0];
-
     if (currentProc.start === null) {
       currentProc.start = currentTime;
     }
 
+    // 🔁 Modified execution logic here:
+    const nextArrivalTime = remaining
+      .filter((p) => p.remaining > 0 && p.arrival > currentTime)
+      .sort((a, b) => a.arrival - b.arrival)[0]?.arrival;
+
+    let execTime;
+    if (nextArrivalTime !== undefined) {
+      execTime = Math.min(currentProc.remaining, nextArrivalTime - currentTime);
+    } else {
+      execTime = currentProc.remaining;
+    }
+
     const start = currentTime;
-    currentProc.remaining--;
-    currentTime++;
-    const end = currentTime;
+    const end = currentTime + execTime;
+
+    currentProc.remaining -= execTime;
+    currentTime = end;
 
     const queueSnapshot = remaining
       .filter((p) => p.arrival <= currentTime && p.remaining > 0)
-
       .sort((a, b) => a.arrival - b.arrival)
       .map((p) => ({
         process: p.process,
         priority: p.priority || null,
         arrival: p.arrival,
-        burst: p.remaining, // <-- Here burst equals remaining burst time (rbt)
+        burst: p.remaining,
         rbt: p.remaining,
       }));
 

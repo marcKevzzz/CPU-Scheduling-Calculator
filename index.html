@@ -9,8 +9,10 @@
       integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
       crossorigin="anonymous"
     />
+    <link rel="icon" href="./img/icon.ico" />
 
     <link rel="stylesheet" href="./style/style.css" />
+
     <title>CPU Scheduling Calculator - Home</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
@@ -24,6 +26,8 @@
         background-color: #f6fbff;
         overflow-x: hidden;
         padding-top: 30px;
+        min-height: 100vh;
+        max-height: max-content;
       }
       header {
         background: linear-gradient(135deg, #2b9cd4, #0c51b9);
@@ -42,20 +46,27 @@
         color: #d0e8ff;
       }
 
+      .body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: calc(100vh - 90px); /* Adjust for footer height */
+        max-height: max-content;
+      }
+
       main {
         display: flex;
-        flex-wrap: wrap;
         justify-content: center;
         align-items: center;
         padding: 4rem 3rem 1em 3em;
         gap: 4rem;
         max-width: 1200px;
-        margin: auto;
+        margin-inline: auto;
       }
 
       .intro-section {
         flex: 1 1 400px;
-        max-width: 600px;
+        max-height: fit-content;
       }
       .intro-section h2 {
         font-size: 2rem;
@@ -67,21 +78,6 @@
         margin-bottom: 2rem;
       }
 
-      .features-section {
-        background: #f4faff;
-        border-radius: 12px;
-        padding: 2rem;
-        width: fit-content;
-        box-shadow: 0 7px 15px rgba(88, 88, 88, 0.575);
-
-      }
-      .features-section h3 {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-        text-align: center;
-        font-weight: bold;
-
-      }
       .feature-list {
         list-style: none;
         padding: 0;
@@ -109,8 +105,7 @@
         perspective: 800px;
         width: 350px;
         height: 350px;
-        margin: auto;
-        padding-top: 7em;
+        padding-top: 3em;
       }
 
       /* 3D cube */
@@ -170,10 +165,6 @@
 
       /* Responsive adjustments */
       @media (max-width: 900px) {
-        main {
-          flex-direction: column;
-          padding: 2rem 1rem;
-        }
         .cube-container {
           width: 280px;
           height: 280px;
@@ -189,12 +180,15 @@
           font-size: 1.3rem;
           border-radius: 14px;
         }
-        .features-section {
-          width: 100% !important;
-        }
-        .intro-section,
-        main {
+        s .intro-section {
           height: fit-content !important;
+        }
+      }
+      @media (max-width: 900px) {
+        main {
+          flex-direction: column-reverse;
+          align-items: center;
+          row-gap: 0;
         }
       }
     </style>
@@ -251,16 +245,15 @@
                 <a class="nav-link mx-2 px-3 active" href="#">Home</a>
               </li>
 
-              <li class="nav-item ">
+              <li class="nav-item">
                 <a
-                  class="nav-link  mx-2 px-3"
+                  class="nav-link mx-2 px-3"
                   href="./src/algorithm.html"
                   role="button"
                   aria-expanded="false"
                 >
                   Algorithm
                 </a>
-                
               </li>
               <li class="nav-item">
                 <a class="nav-link mx-2 px-3" href="./about-us.html">About</a>
@@ -275,49 +268,103 @@
         </div>
       </div>
     </nav>
-    <section class="cube-container" aria-label="3D CPU graphic element">
-      <div class="cube" aria-hidden="true">
-        <div class="face front">CPU</div>
-        <div class="face back">Scheduling</div>
-        <div class="face right">Calculator</div>
-        <div class="face left">Performance</div>
-        <div class="face top">Efficiency</div>
-        <div class="face bottom">Process</div>
+    <div class="body">
+      <div class="d-flex flex-column gap-4">
+        <main>
+          <section
+            class="intro-section"
+            aria-label="Introduction to CPU Scheduling"
+          >
+            <h2 class="fs-2 fw-bold">Introduction to CPU Scheduling</h2>
+            <p>
+              CPU scheduling is a fundamental concept in operating systems that
+              manages the execution order of processes on the CPU. By allocating
+              CPU time effectively, it maximizes system efficiency, reduces
+              waiting time, and improves overall performance.
+            </p>
+            <a class="btn btn-primary px-4" href="./src/algorithm.html">
+              Try Now</a
+            >
+          </section>
+
+          <section class="cube-container" aria-label="3D CPU graphic element">
+            <div class="cube" aria-hidden="true">
+              <div class="face front">CPU</div>
+              <div class="face back">Scheduling</div>
+              <div class="face right">Calculator</div>
+              <div class="face left">Performance</div>
+              <div class="face top">Efficiency</div>
+              <div class="face bottom">Process</div>
+            </div>
+          </section>
+        </main>
+
+        <!-- Features Section -->
+        <section class="bg-white text-dark">
+          <div class="container">
+            <h2 class="text-center mb-4 fw-bold">Key Features</h2>
+            <p class="text-center text-muted">
+              Explore the powerful tools included in the CPU Scheduling
+              Calculator.
+            </p>
+
+            <div class="row g-4">
+              <!-- Feature 1 -->
+              <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center">
+                    <i
+                      class="bi bi-bar-chart-line-fill fs-2 mb-3 text-primary"
+                    ></i>
+                    <h5 class="card-title fw-semibold">
+                      Gantt Chart Visualization
+                    </h5>
+                    <p class="card-text text-muted">
+                      Instantly generate and view scheduling results using Gantt
+                      charts for better understanding.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Feature 2 -->
+              <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center">
+                    <i class="bi bi-clock-history fs-2 mb-3 text-primary"></i>
+                    <h5 class="card-title fw-semibold">
+                      Accurate Time Metrics
+                    </h5>
+                    <p class="card-text text-muted">
+                      Calculate average waiting time, turnaround time, and
+                      response time for each algorithm.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Feature 3 -->
+              <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body text-center">
+                    <i class="bi bi-sliders2 fs-2 mb-3 text-primary"></i>
+                    <h5 class="card-title fw-semibold">
+                      Preemptive & Non-Preemptive
+                    </h5>
+                    <p class="card-text text-muted">
+                      Switch between scheduling modes to analyze how different
+                      strategies affect performance.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
-    <main>
-      <section
-        class="intro-section"
-        aria-label="Introduction to CPU Scheduling"
-      >
-        <h2 class="fs-2 fw-bold">Introduction to CPU Scheduling</h2>
-        <p>
-          CPU scheduling is a fundamental concept in operating systems that
-          manages the execution order of processes on the CPU. By allocating CPU
-          time effectively, it maximizes system efficiency, reduces waiting
-          time, and improves overall performance.
-        </p>
-        <a class="btn btn-primary px-4" href="./src/algorithm.html"> Try Now</a>
-      </section>
 
-      <aside
-        class="features-section"
-        aria-label="Features of CPU Scheduling Calculator"
-      >
-        <h3>Highlights & Features</h3>
-        <ul class="feature-list">
-          <li>Supports multiple scheduling algorithms</li>
-          <li>Interactive process input &amp; time calculations</li>
-          <li>Dynamic Gantt chart visualization</li>
-          <li>Performance metrics: waiting &amp; turnaround times</li>
-          <li>User-friendly and responsive interface</li>
-        </ul>
-      </aside>
-    </main>
-
-    <footer>
-      <footer>&copy; 2025 KVZ. All rights reserved.</footer>
-    </footer>
+      <footer class="mt-5">&copy; 2025 KVZ. All rights reserved.</footer>
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script

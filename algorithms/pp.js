@@ -60,10 +60,22 @@ export function calculatePP(processes) {
 
     if (current.start === null) current.start = currentTime;
 
+    const nextArrivalTime = remaining
+      .filter((p) => p.remaining > 0 && p.arrival > currentTime)
+      .sort((a, b) => a.arrival - b.arrival)[0]?.arrival;
+
+    let execTime;
+    if (nextArrivalTime !== undefined) {
+      execTime = Math.min(current.remaining, nextArrivalTime - currentTime);
+    } else {
+      execTime = current.remaining;
+    }
+
     const start = currentTime;
-    current.remaining--;
-    currentTime++;
-    const end = currentTime;
+    const end = currentTime + execTime;
+
+    current.remaining -= execTime;
+    currentTime = end;
 
     const queueSnapshot = remaining
       .filter((p) => p.arrival <= currentTime && p.remaining > 0)

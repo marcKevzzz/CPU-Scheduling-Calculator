@@ -93,10 +93,10 @@ main {
     margin: 0.5em !important;
   }
 
-  main {
+  /* main {
     margin-top: 0.8em !important;
     padding-inline: 0.5em !important;
-  }
+  } */
 
   #header1 {
     top: 70px !important;
@@ -117,6 +117,13 @@ main {
       padding-inline: 0 !important;
     }
   }
+  .cards {
+    flex-direction: column;
+    max-width: 400px;
+    padding: 20px 15px;
+    gap: 15px;
+    width: 100%;
+  }
 }
 
 @media screen and (min-width: 576px) {
@@ -130,7 +137,7 @@ main {
 
 .aside-nav {
   position: sticky;
-  top: 5rem;
+  top: 84px;
   height: fit-content;
 }
 
@@ -144,6 +151,17 @@ a.active {
   background-color: var(--primary-color);
   color: var(--light-color);
   border-radius: 0.3rem;
+}
+
+.nav-link{
+  border-radius: 0.25em;
+}
+
+.nav-link:hover,
+.nav-link.dropdown-toggle:hover,
+.dropdown-item:hover {
+  background-color: var(--primary-color);
+  color: var(--background-color);
 }
 
 .pane {
@@ -182,12 +200,12 @@ input::-webkit-inner-spin-button {
 }
 
 *::-webkit-scrollbar {
-  width: 0.3em;
+  width: 0.5em;
   height: 0.3em;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: var(--primary-color);
+  background-color: var(--dark-color);
   border-radius: 20px;
 }
 
@@ -362,21 +380,22 @@ div.bg-primary.px-2 {
 .hero {
   display: flex;
   gap: 4em;
+  align-items: center;
 }
 .hero-image img {
-  width: 40vw;
+  width: 30vw;
 }
 .cards {
   background: #fff;
   border-radius: 15px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-  width: 90%;
   overflow: hidden;
   display: flex;
   align-items: center;
   padding: 30px;
   gap: 30px;
   transition: transform 0.3s ease;
+  max-width: 60em;
 }
 .cards:hover {
   transform: translateY(-8px);
@@ -431,7 +450,6 @@ div.bg-primary.px-2 {
 }
 
 footer {
-  margin-top: 5em;
   font-size: 0.85em;
   color: #6c757d;
   text-align: center;
@@ -453,13 +471,7 @@ footer {
     padding: 1em;
     padding-top: 5em;
   }
-  .cards {
-    flex-direction: column;
-    max-width: 400px;
-    padding: 20px 15px;
-    gap: 15px;
-    width: 100%;
-  }
+ 
   .avatar {
     width: 120px;
     height: 120px;
