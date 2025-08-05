@@ -31,8 +31,9 @@ A minimalist web-based tool for simulating and visualizing CPU scheduling algori
 ## 🚀 Features
 
 - 🔁 Supports Preemptive and Non-Preemptive Scheduling
+- 🔔 Toast Notifications for Calculate, Clear, and Validation Feedback
 - ⏱ Gantt Chart Generation
-- 📊 Calculates Waiting Time, Turnaround Time, and Response Time
+- 📊 Calculates Waiting Time, Turnaround Time, and CPU Util
 - 📱 Responsive Design (Mobile/Desktop)
 - 🧮 Algorithms: FCFS, SJF, SRTF, Priority, Round Robin
 
